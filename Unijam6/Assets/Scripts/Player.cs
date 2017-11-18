@@ -18,12 +18,20 @@ public class Player : MonoBehaviour
 
     Controller2D controller;
 
+    int maxHealthUnits = 5;                     // combien de coeurs de vie ?
+    int healthPointsPerUnit = 20;               // 1 coeur = combien de points de vie dans la barre de vie ?
+    int maxHealthPoints;
+    int currentHealthPoints;
+
     void Start()
     {
         controller = GetComponent<Controller2D>();
 
         gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+
+        maxHealthPoints = maxHealthUnits * healthPointsPerUnit;
+        currentHealthPoints = maxHealthPoints;
     }
 
     void Update()
@@ -45,6 +53,21 @@ public class Player : MonoBehaviour
         velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void TakeDamage (int damage)
+    {
+        Debug.Log("Took " + damage + " damage");
+
+        currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0, maxHealthPoints);
+
+        if (currentHealthPoints == 0)
+            Die();
+    }
+
+    void Die ()
+    {
+        GameManager.instance.PlayerDead();
     }
 }
 

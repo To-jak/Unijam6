@@ -123,6 +123,10 @@ public class Controller2D : MonoBehaviour
             default:
                 break;
         }
+
+        Obstacle obstacle = other.GetComponent<Obstacle>();
+        if (obstacle != null)
+            GetComponent<Player>().TakeDamage(obstacle.damage);
     }
 
     struct RaycastOrigins
