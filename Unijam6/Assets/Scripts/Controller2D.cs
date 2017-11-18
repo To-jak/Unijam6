@@ -61,6 +61,8 @@ public class Controller2D : MonoBehaviour
 
                 collisions.left = directionX == -1;
                 collisions.right = directionX == 1;
+
+                ProcessCollision(hit.collider.gameObject);
             }
         }
     }
@@ -110,6 +112,17 @@ public class Controller2D : MonoBehaviour
 
         horizontalRaySpacing = bounds.size.y / (horizontalRayCount - 1);
         verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);
+    }
+
+    void ProcessCollision(GameObject other)
+    {
+        switch (other.tag)
+        {
+            case "End":
+                Debug.Log("End of Level"); break;
+            default:
+                break;
+        }
     }
 
     struct RaycastOrigins
