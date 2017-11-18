@@ -18,6 +18,8 @@ public class Health : MonoBehaviour {
         heartBar = GameObject.FindGameObjectWithTag("HeartBar").GetComponent<HeartBar>();
 
         heartBar.gameObject.SetActive(false);
+
+        Init();
     }
 
     public void Init()
@@ -54,9 +56,9 @@ public class Health : MonoBehaviour {
         UpdateHealthDisplay();
     }
 
-    public void AddHealthPoints(int healthPoints)
+    public void RemoveHealthUnits(int healthUnits)
     {
-        currentHealthPoints = Mathf.Clamp(currentHealthPoints + healthPoints, 0, maxHealthPoints);
+        currentHealthPoints = Mathf.Clamp(currentHealthPoints - healthUnits * healthPointsPerUnit, 0, maxHealthPoints);
         UpdateHealthDisplay();
     }
 

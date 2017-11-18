@@ -15,8 +15,12 @@ public class Heart : MonoBehaviour{
 
     Controller2D controller;
 
+    public bool catchable;
+
     void Start () {
         controller = GetComponent<Controller2D>();
+
+        Invoke("SetCatchable", 1f);
     }
 	
 	void Update () {
@@ -24,26 +28,29 @@ public class Heart : MonoBehaviour{
         {
             if (controller.collisions.above || controller.collisions.below)
             {
-                Debug.Log("alalalla");
                 velocity.y = 0;
             }
 
             float targetVelocityX = 0;
 
-            velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, 0.2f);
+            velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? 0.4f : 2f);
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
         }
     }
 
-    public void ChangeState(HeartState state)
+    public void SetVelocity(Vector3 velocity)
+    {
+        this.velocity = velocity;
+    }
+
+    public void SetState(HeartState state)
     {
         this.state = state;
     }
 
-    IEnumerator MoveToPos (Vector3 newPos)
+    void SetCatchable()
     {
-        // Pour revenir dans la barre
-        yield return null;
+        catchable = true;
     }
 }

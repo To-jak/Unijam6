@@ -21,7 +21,6 @@ public class HealthBar : MonoBehaviour {
 
     GameObject player;
 
-
 	// Use this for initialization
 	void Start ()
     {
@@ -38,7 +37,18 @@ public class HealthBar : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(1))
         {
-            if (barState != 1)
+            if (barState == 2)
+            {
+                barState = 3;
+            }
+            if (barState == 0)
+            {
+                barState = 4;
+            }
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            if (barState == 4)
             {
                 barState = 3;
             }
@@ -85,11 +95,20 @@ public class HealthBar : MonoBehaviour {
         if(barState == 3)
         {
             gameObject.transform.position = Vector3.SmoothDamp(transform.position, player.transform.position + relativePostion, ref velocity, smoothTime_GreatDistance);
+            gameObject.transform.rotation = Quaternion.Lerp(transform.rotation, player.transform.rotation, 1f);
             transform.GetChild(0).gameObject.layer = 9;
             if (Vector3.Distance(transform.position,player.transform.position) < range)
             {
                 barState = 0;
             }
+        }
+        if (barState == 4)
+        {
+            Vector3 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position).normalized;
+            Vector3 dist = new Vector3(dir.x, dir.y, 0f).normalized * 1.5f;
+            float rot_z = Mathf.Atan2(dist.y, dist.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+            transform.position = player.transform.position + dist;
         }
     }
 }

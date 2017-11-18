@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HeartBar : MonoBehaviour {
 
@@ -12,8 +13,13 @@ public class HeartBar : MonoBehaviour {
     private List<GameObject> heartList;
     
     protected GameObject player;
+
+    float maxThrowVelocity = 2f;
+    float maxRange = 10f;
+    GameObject throwableHeart;
+    bool throwing;
     
-    void Start () {
+    void Awake () {
         player = GameObject.FindGameObjectWithTag("Player");
 
         heartList = new List<GameObject>();
@@ -51,11 +57,48 @@ public class HeartBar : MonoBehaviour {
                 heartList[i].transform.position = transform.position + ((i - (heartList.Count / 2f - 0.5f)) * spacing) * Vector3.right;
             }
         }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (heartList.Count > 0)
+            {
+                throwableHeart = Instantiate(heartPrefab);
+                RemoveHeart();
+                throwableHeart.transform.position = player.transform.position;
+                throwing = true;
+            }
+        }
+
+        if (throwing)
+        {
+            throwableHeart.transform.position = player.transform.position;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (heartList.Count >= 0 && throwing)
+            {
+                Vector3 dist = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position);
+                Vector3 dir = Mathf.Clamp(dist.magnitude, 0f, maxRange) * maxThrowVelocity * dist.normalized;
+                throwableHeart.GetComponent<Heart>().SetVelocity(new Vector3(dir.x, dir.y, 0f));
+                throwableHeart.GetComponent<Heart>().SetState(Heart.HeartState.inWorld);
+                throwing = false;
+            }
+        }
     }
 
     public void AddHeart (GameObject newHeart)
     {
-        heartList.Add(newHeart);
+        Destroy(newHeart);
+        heartList.Add(Instantiate(heartPrefab));
         player.GetComponent<Health>().AddHealthUnits(1);
+    }
+
+    public void RemoveHeart()
+    {
+        GameObject heart = heartList[heartList.Count - 1];
+        heartList.Remove(heart);
+        Destroy(heart);
+        player.GetComponent<Health>().RemoveHealthUnits(1);
     }
 }
