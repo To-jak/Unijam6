@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -21,8 +22,28 @@ public class GameManager : MonoBehaviour {
         startPosition = GameObject.FindGameObjectWithTag("Start").transform.position;
     }
 
-    public void PlayerDead()
+    void InitPlayer()
     {
         player.transform.position = startPosition;
+        player.GetComponent<Health>().Init();
+    }
+
+    public void PlayerDead()
+    {
+        InitPlayer();
+    }
+
+    public void EndLevel()
+    {
+        string currentLevelName = SceneManager.GetActiveScene().name;
+        int currentLevelIndex = currentLevelName[currentLevelName.Length - 1];
+        
+        try
+        {
+            MenuManager.instance.GoToLevel(currentLevelIndex + 1);
+        } catch (System.Exception)
+        {
+            MenuManager.instance.GoToMenu();
+        }
     }
 }

@@ -4,7 +4,6 @@ using System.Collections;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Controller2D : MonoBehaviour
 {
-
     public LayerMask collisionMask;
 
     const float skinWidth = .015f;
@@ -62,7 +61,7 @@ public class Controller2D : MonoBehaviour
                 collisions.left = directionX == -1;
                 collisions.right = directionX == 1;
 
-                ProcessCollision(hit.collider.gameObject);
+                ProcessCollision(hit.collider.gameObject, directionX * Vector3.right);
             }
         }
     }
@@ -87,6 +86,8 @@ public class Controller2D : MonoBehaviour
 
                 collisions.below = directionY == -1;
                 collisions.above = directionY == 1;
+
+                ProcessCollision(hit.collider.gameObject, directionY * Vector3.up);
             }
         }
     }
@@ -114,19 +115,9 @@ public class Controller2D : MonoBehaviour
         verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);
     }
 
-    void ProcessCollision(GameObject other)
+    void ProcessCollision(GameObject other, Vector3 dir)
     {
-        switch (other.tag)
-        {
-            case "End":
-                Debug.Log("End of Level"); break;
-            default:
-                break;
-        }
-
-        Obstacle obstacle = other.GetComponent<Obstacle>();
-        if (obstacle != null)
-            GetComponent<Player>().TakeDamage(obstacle.damage);
+        // Dégats sur l'objet
     }
 
     struct RaycastOrigins

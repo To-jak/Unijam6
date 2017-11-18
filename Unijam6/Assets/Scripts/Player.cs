@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Controller2D))]
+[RequireComponent(typeof(PlayerController2D))]
 public class Player : MonoBehaviour
 {
 
@@ -16,58 +16,80 @@ public class Player : MonoBehaviour
     Vector3 velocity;
     float velocityXSmoothing;
 
-    Controller2D controller;
+    PlayerController2D controller;
 
-    int maxHealthUnits = 5;                     // combien de coeurs de vie ?
-    int healthPointsPerUnit = 20;               // 1 coeur = combien de points de vie dans la barre de vie ?
-    int maxHealthPoints;
-    int currentHealthPoints;
+    Health health;
+
+    float hurtCooldown = 0.5f;
+    float hurtTimer;
 
     void Start()
     {
-        controller = GetComponent<Controller2D>();
+        controller = GetComponent<PlayerController2D>();
 
         gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
 
-        maxHealthPoints = maxHealthUnits * healthPointsPerUnit;
-        currentHealthPoints = maxHealthPoints;
+        health = GetComponent<Health>();
     }
 
     void Update()
     {
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //      Gestion joueur                                                                                  //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if (controller.collisions.above || controller.collisions.below)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            velocity.y = 0;
+            // changer sprite, valeurs de vitesse/saut, healthbar/hearts
         }
 
-        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //      Déplacement                                                                                     //
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if (Input.GetKeyDown(KeyCode.Space) && controller.collisions.below)
+        float targetVelocityX;
+
+        hurtTimer += Time.deltaTime;
+
+        if (hurtTimer >= hurtCooldown)
         {
-            velocity.y = jumpVelocity;
+
+            if (controller.collisions.above || controller.collisions.below)
+            {
+                velocity.y = 0;
+            }
+
+            Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+            if (Input.GetButtonDown("Jump") && controller.collisions.below)
+            {
+                velocity.y = jumpVelocity;
+            }
+
+            targetVelocityX = input.x * moveSpeed;
+            velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
+        } else
+        {
+            targetVelocityX = 0f;
         }
 
-        float targetVelocityX = input.x * moveSpeed;
         velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
 
-    public void TakeDamage (int damage)
+    public void Hurt(int damage, Vector3 dir)
     {
-        Debug.Log("Took " + damage + " damage");
-
-        currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0, maxHealthPoints);
-
-        if (currentHealthPoints == 0)
-            Die();
-    }
-
-    void Die ()
-    {
-        GameManager.instance.PlayerDead();
+        if (hurtTimer >= hurtCooldown)
+        {
+            int currentHealth = health.TakeDamage(damage);
+            hurtTimer = 0f;
+            if (currentHealth > 0)
+            {
+                velocity = dir * jumpVelocity;
+            }
+        }
     }
 }
 
