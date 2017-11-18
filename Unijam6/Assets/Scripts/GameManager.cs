@@ -4,12 +4,25 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
+    public static GameManager instance;
+
     GameObject player;
+    Vector3 startPosition;
 
     private void Start()
     {
+        if (instance == null)
+            instance = this;
+        else
+            throw new System.Exception("More than one instance of GameManager");
+
         player = GameObject.FindGameObjectWithTag("Player");
 
-        player.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
+        startPosition = GameObject.FindGameObjectWithTag("Start").transform.position;
+    }
+
+    public void PlayerDead()
+    {
+        player.transform.position = startPosition;
     }
 }
