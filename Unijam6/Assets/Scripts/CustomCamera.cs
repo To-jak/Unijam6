@@ -5,7 +5,7 @@ using UnityEngine;
 public class CustomCamera : MonoBehaviour {
 
     public Transform target;
-    public float minY, maxY;
+    public float minY, maxY, minX, maxX;
     public Vector3 deadZoneOrigin;
     public float deadZoneHeight;
     public float deadZoneWidth;
@@ -14,7 +14,7 @@ public class CustomCamera : MonoBehaviour {
 
     private void Update()
     {
-        Vector3 targetPos = new Vector3(target.position.x, Mathf.Clamp(target.position.y, minY, maxY), transform.position.z);
+        Vector3 targetPos = new Vector3(Mathf.Clamp(target.position.x, minX, maxX), Mathf.Clamp(target.position.y, minY, maxY), transform.position.z);
 
         if (targetPos.x < transform.position.x + deadZoneOrigin.x - deadZoneWidth / 2f
             || targetPos.x > transform.position.x + deadZoneOrigin.x + deadZoneWidth / 2f

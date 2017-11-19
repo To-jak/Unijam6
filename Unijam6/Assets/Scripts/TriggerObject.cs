@@ -17,7 +17,6 @@ public class TriggerObject : MonoBehaviour {
 
         if (allTriggers && !triggered)
         {
-            Debug.Log("AAAAAAAAAAAAAAAAA");
             Trigger(true);
         }
         else if (triggered && !allTriggers)

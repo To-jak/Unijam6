@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class TriggerController2D : Controller2D {
 
+    public bool up, down, right, left;
     public bool oneShotTrigger;
     public bool triggered = false;
 
     protected Animator anim;
+
+    public float cooldown = 0.5f;
+    float timer;
 
     public void Start()
     {
@@ -16,18 +20,20 @@ public class TriggerController2D : Controller2D {
 
     public void Update()
     {
+        timer += Time.deltaTime;
+
         UpdateRaycastOrigins();
         collisions.Reset();
         
-        VerticalCollisions(-1f);
-        VerticalCollisions(1f);
-        HorizontalCollisions(-1f);
-        HorizontalCollisions(1f);
+        if (down) VerticalCollisions(-1f);
+        if (up) VerticalCollisions(1f);
+        if (left) HorizontalCollisions(-1f);
+        if (right) HorizontalCollisions(1f);
     }
 
-    protected void HorizontalCollisions(float directionX)
+    protected virtual void HorizontalCollisions(float directionX)
     {
-        float rayLength = skinWidth;
+        float rayLength = skinWidth + 0.5f; ;
 
         for (int i = 0; i < horizontalRayCount; i++)
         {
@@ -46,17 +52,22 @@ public class TriggerController2D : Controller2D {
 
                 ProcessCollision(hit.collider.gameObject, directionX * Vector3.right);
             }
-            else
+            /*else
             {
-                if (!oneShotTrigger)
+                if (!oneShotTrigger && timer >= cooldown)
+                {
                     triggered = false;
-            }
+                    anim.SetBool("restartAnimation", true);
+                }
+            }*/
         }
     }
 
-    protected void VerticalCollisions(float directionY)
+    protected virtual void VerticalCollisions(float directionY)
     {
-        float rayLength = skinWidth;
+        float rayLength = skinWidth + 0.5f;
+
+        int numberOfHits = 0;
 
         for (int i = 0; i < verticalRayCount; i++)
         {
@@ -68,24 +79,31 @@ public class TriggerController2D : Controller2D {
 
             if (hit)
             {
-                rayLength = hit.distance;
+                //rayLength = hit.distance;
 
                 collisions.below = directionY == -1;
                 collisions.above = directionY == 1;
 
+                numberOfHits++;
+
                 ProcessCollision(hit.collider.gameObject, directionY * Vector3.up);
             }
-            else
-            {
-                if (!oneShotTrigger)
-                    triggered = false;
-            }
+        }
+        if (triggered && numberOfHits == 0 && !oneShotTrigger && timer >= cooldown)
+        {
+            triggered = false;
+            anim.SetBool("restartAnimation", true);
         }
     }
 
     protected override void ProcessCollision(GameObject other, Vector3 dir)
     {
-        triggered = true;
-        anim.SetBool("startAnimation", true);
+        if (!triggered)
+        {
+            triggered = true;
+            timer = 0f;
+            anim.SetBool("startAnimation", true);
+        }
+        
     }
 }

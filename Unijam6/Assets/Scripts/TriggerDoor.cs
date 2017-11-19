@@ -11,12 +11,23 @@ public class TriggerDoor : TriggerObject {
 
     bool isMoving;
 
+    private AudioSource source;
+    public AudioClip doorSound;
+
+    void Awake()
+    {
+
+        source = GetComponent<AudioSource>();
+
+    }
+
     public override void Trigger(bool triggered)
     {
         if (!isMoving)
         {
             Vector3 newPosition = (triggered) ? openPosition.position : closedPosition.position;
             isMoving = true;
+            source.PlayOneShot(doorSound, 1F);
             StartCoroutine("MoveTo", newPosition);
             this.triggered = triggered;
         }
