@@ -70,36 +70,34 @@ public class Player : MonoBehaviour
     public void Init()
     {
         SwitchState(PlayerState.HealthBar);
+        SetRepos();
+    }
+
+    private void LateUpdate()
+    {
+        dead = GetComponent<Health>().isDead;
+        if (!anim.GetBool("NormalMort") && !anim.GetBool("HeartMort") && dead)
+        {
+            if (playerState == PlayerState.HealthBar)
+            {
+                SetMort();
+            }
+            else
+            {
+                SetHeartMort();
+            }
+        }
     }
 
     void Update()
     {
         lancer = GetComponent<Health>().heartBar.throwing;
-        dead = GetComponent<Health>().isDead;
+        
         if (anim.GetBool("HeartLancer"))
         {
             SetHeartRepos();
         }
-        if (anim.GetBool("NormalMort") || anim.GetBool("HeartMort"))
-        {
-            dead = false;
-            GetComponent<Health>().isDead = false;
-        }
-        else
-        {
-            dead = GetComponent<Health>().isDead;
-            if (dead)
-            {
-                if (playerState == PlayerState.HealthBar)
-                {
-                    SetMort();
-                }
-                else
-                {
-                    SetHeartMort();
-                }
-            }
-        }
+        
 
         if (courseDroite)
         {
@@ -325,7 +323,6 @@ public class Player : MonoBehaviour
         anim.SetBool("NormalCourse", false);
         anim.SetBool("NormalRepos", false);
         anim.SetBool("NormalMort", false);
-
     }
 
     public void SoundCourse()

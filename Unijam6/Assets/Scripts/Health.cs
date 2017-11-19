@@ -106,5 +106,7 @@ public class Health : MonoBehaviour {
         
         if (GameManager.instance != null)
             GameManager.instance.PlayerDead();
+
+        isDead = false;
     }
 }
