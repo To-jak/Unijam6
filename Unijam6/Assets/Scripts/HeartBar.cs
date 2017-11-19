@@ -21,7 +21,13 @@ public class HeartBar : MonoBehaviour {
     Animator anim;
 
     int nbHearts;
-    
+    private AudioSource source;
+    public AudioClip coeurClickBegin;
+    public AudioClip coeurClickEnd;
+    public AudioClip coeurClickLoop;
+    public AudioClip coeurHover;
+
+
     void Start ()
     {
         anim = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
@@ -29,7 +35,7 @@ public class HeartBar : MonoBehaviour {
 
     void Awake () {
         player = GameObject.FindGameObjectWithTag("Player");
-
+        source = GetComponent<AudioSource>();
         heartList = new List<GameObject>();
     }
 
@@ -70,7 +76,9 @@ public class HeartBar : MonoBehaviour {
                 int n = nbHearts - heartList.Count;
                 for (int i = 0; i < n; i++)
                 {
-                    heartList.Add(Instantiate(heartPrefab));
+                    GameObject newHeart = Instantiate(heartPrefab);
+                    newHeart.SetActive(false);
+                    heartList.Add(newHeart);
                 }
             }
         }
@@ -91,6 +99,11 @@ public class HeartBar : MonoBehaviour {
         {
             if (heartList.Count > 0)
             {
+                if (!throwing)
+                {
+                    source.PlayOneShot(coeurClickBegin, 1F);
+                }
+                
                 throwableHeart = Instantiate(heartPrefab);
                 RemoveHeart();
                 throwableHeart.transform.position = player.transform.position;
@@ -102,6 +115,9 @@ public class HeartBar : MonoBehaviour {
         if (throwing)
         {
             throwableHeart.transform.position = player.transform.position;
+
+            //source.PlayOneShot(coeurClickLoop, 1F);
+            
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -110,6 +126,8 @@ public class HeartBar : MonoBehaviour {
             {
                 anim.SetBool("HeartLancer", true);
                 Invoke("ThrowHeart", 0.2f);
+                source.PlayOneShot(coeurClickEnd, 1F);
+                //Debug.Log("CoeurClickEnd");
             }
         }
     }
@@ -130,6 +148,7 @@ public class HeartBar : MonoBehaviour {
         Destroy(newHeart);
         heartList.Add(Instantiate(heartPrefab, transform.position + ((heartList.Count - (heartList.Count / 2f - 0.5f)) * spacing) * Vector3.right, Quaternion.identity));
         player.GetComponent<Health>().AddHealthUnits(1);
+        source.PlayOneShot(coeurHover, 1F);
     }
 
     public void RemoveHeart()

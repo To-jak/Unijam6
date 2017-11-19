@@ -7,7 +7,7 @@ public class TriggerController2D : Controller2D {
     public bool oneShotTrigger;
     public bool triggered = false;
 
-    private Animator anim;
+    protected Animator anim;
 
     public void Start()
     {

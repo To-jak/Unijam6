@@ -11,6 +11,12 @@ public class Shooter : MonoBehaviour {
     [SerializeField]
     public GameObject projectile;
 
+    [SerializeField]
+    Vector3 direction;
+
+    [SerializeField]
+    float rotation;
+
 	// Use this for initialization
 	void Start () {
 
@@ -26,6 +32,8 @@ public class Shooter : MonoBehaviour {
 
     void Fire()
     {
-        GameObject proj = Instantiate(projectile,transform);
+        projectile.GetComponent<Projectile>().direction = direction;
+        projectile.GetComponent<Projectile>().rotation = rotation;
+        GameObject proj = Instantiate(projectile,transform.position,transform.localRotation);
     }
 }

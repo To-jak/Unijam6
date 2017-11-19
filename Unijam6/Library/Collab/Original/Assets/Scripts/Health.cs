@@ -9,15 +9,17 @@ public class Health : MonoBehaviour {
     int maxHealthPoints;
     int currentHealthPoints;
 
-    HealthBar healthBar;
-    HeartBar heartBar;
+    public HealthBar healthBar;
+    public HeartBar heartBar;
 
-    void Start()
+    private AudioSource source;
+    public AudioClip mort;
+
+
+    void Awake()
     {
-        healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<HealthBar>();
-        heartBar = GameObject.FindGameObjectWithTag("HeartBar").GetComponent<HeartBar>();
-
-        heartBar.gameObject.SetActive(false);
+        Init();
+        source = GetComponent<AudioSource>();
     }
 
     public void Init()
@@ -42,7 +44,8 @@ public class Health : MonoBehaviour {
 
         if (currentHealthPoints == 0)
         {
-            Die();
+            source.PlayOneShot(mort, 1F);
+            Invoke("Die",1);
             return 0;
         }
         return currentHealthPoints;
@@ -54,9 +57,9 @@ public class Health : MonoBehaviour {
         UpdateHealthDisplay();
     }
 
-    public void AddHealthPoints(int healthPoints)
+    public void RemoveHealthUnits(int healthUnits)
     {
-        currentHealthPoints = Mathf.Clamp(currentHealthPoints + healthPoints, 0, maxHealthPoints);
+        currentHealthPoints = Mathf.Clamp(currentHealthPoints - healthUnits * healthPointsPerUnit, 0, maxHealthPoints);
         UpdateHealthDisplay();
     }
 
@@ -68,6 +71,7 @@ public class Health : MonoBehaviour {
 
     void Die()
     {
-        GameManager.instance.PlayerDead();
+        if (GameManager.instance != null)
+            GameManager.instance.PlayerDead();
     }
 }

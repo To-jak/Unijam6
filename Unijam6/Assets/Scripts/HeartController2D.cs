@@ -4,7 +4,16 @@ using UnityEngine;
 
 public class HeartController2D : Controller2D {
 
-    public virtual void Move(Vector3 velocity)
+    public AudioClip coeurHitWall;
+    private AudioSource source;
+    private bool firstHit = false;
+
+    void Awake()
+    {
+        source = GetComponent<AudioSource>();
+    }
+
+    public override void Move(Vector3 velocity)
     {
         UpdateRaycastOrigins();
         collisions.Reset();
@@ -13,5 +22,15 @@ public class HeartController2D : Controller2D {
         VerticalCollisions(ref velocity);
 
         transform.Translate(velocity);
+    }
+
+    protected override void ProcessCollision(GameObject other, Vector3 dir)
+    {
+        if (!firstHit)
+        {
+            source.PlayOneShot(coeurHitWall, 1F);
+            firstHit = true;
+            //Debug.Log("Hit");
+        }
     }
 }

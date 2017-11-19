@@ -16,7 +16,7 @@ public class ProjectileController2D : Controller2D {
                 Destroy(gameObject);
                 break;
             default:
-                Debug.Log("oui");
+                GetComponent<Projectile>().Impact();
                 Destroy(gameObject);
                 break;
         }

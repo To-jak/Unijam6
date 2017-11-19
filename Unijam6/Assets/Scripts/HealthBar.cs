@@ -21,12 +21,20 @@ public class HealthBar : MonoBehaviour {
 
     GameObject player;
 
-	// Use this for initialization
-	void Awake ()
+    private AudioSource source;
+    public AudioClip barreClickBegin;
+    public AudioClip barreClickLoop;
+    public AudioClip barreClickEnd;
+    public AudioClip barreHover;
+    public AudioClip bouclierHitProjectile;
+
+    // Use this for initialization
+    void Awake ()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         transform.position = player.transform.position + relativePostion;
-	}
+        source = GetComponent<AudioSource>();
+    }
 
     void OnEnable()
     {
@@ -56,6 +64,10 @@ public class HealthBar : MonoBehaviour {
         }
         if (Input.GetMouseButtonUp(1))
         {
+            if (barState == 0)
+            {
+                source.PlayOneShot(barreClickBegin, 1F);
+            }
             if (barState == 4)
             {
                 barState = 3;
@@ -72,11 +84,22 @@ public class HealthBar : MonoBehaviour {
     void OnMouseDrag()
     {
         barState = 1;
+        //source.PlayOneShot(barreClickLoop, 1F);
     }
 
     void OnMouseUp()
     {
         barState = 2;
+        source.PlayOneShot(barreClickEnd, 1F);
+    }
+    void OnMouseDown()
+    {
+        source.PlayOneShot(barreClickBegin, 1F);
+    }
+
+    void OnMouseEnter()
+    {
+        source.PlayOneShot(barreHover, 1F);
     }
 
     void ProcessState()

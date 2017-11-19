@@ -18,6 +18,11 @@ public class CircularMenu : MonoBehaviour
     public GameObject player;
     public GameObject healthBar;
     public GameObject heartBar;
+
+    private AudioSource source;
+    public AudioClip swapBarre;
+    public AudioClip swapHeart;
+
     // Use this for initialization
     void Awake()
     {
@@ -31,6 +36,7 @@ public class CircularMenu : MonoBehaviour
         heartBar = GameObject.FindGameObjectWithTag("HeartBar");
         CurMenuItem = 0;
         OldMenuItem = 0;
+        source = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -84,12 +90,14 @@ public class CircularMenu : MonoBehaviour
             player.GetComponent<Player>().SwitchState(Player.PlayerState.HealthBar);
             healthBar.SetActive(true);
             heartBar.SetActive(false);
+            source.PlayOneShot(swapBarre, 1F);
         }
         if (CurMenuItem == 1)
         {
             player.GetComponent<Player>().SwitchState(Player.PlayerState.HeartBar);
             healthBar.SetActive(false);
             heartBar.SetActive(true);
+            source.PlayOneShot(swapHeart, 1F);
         }
     }
 }

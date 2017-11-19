@@ -48,6 +48,11 @@ public class Player : MonoBehaviour
         actualScale = transform.localScale.x;
     }
 
+    public void Init()
+    {
+        SwitchState(PlayerState.HealthBar);
+    }
+
     void Update()
     {
         lancer = GetComponent<Health>().heartBar.throwing;
@@ -160,12 +165,12 @@ public class Player : MonoBehaviour
             case (PlayerState.HealthBar):
                 playerState = PlayerState.HealthBar;
                 controller.collisionMask = healthBarCollisionMask;
-                anim.SetBool("NormalReposDroite", true);
+                anim.SetBool("NormalRepos", true);
                 break;
             case (PlayerState.HeartBar):
                 playerState = PlayerState.HeartBar;
                 controller.collisionMask = heartBarCollisionMask;
-                anim.SetBool("HeartReposDroite", true);
+                anim.SetBool("HeartRepos", true);
                 break;
         }
         ResetBool();

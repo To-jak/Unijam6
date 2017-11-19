@@ -6,9 +6,14 @@ public class TriggerLockController2D : TriggerController2D {
 
     protected override void ProcessCollision(GameObject other, Vector3 dir)
     {
-        triggered = true;
-        GetComponent<BoxCollider2D>().enabled = false;
-        other.GetComponent<Heart>().enabled = false;
-        other.transform.position = transform.position;
+        if (!triggered)
+        {
+            triggered = true;
+            other.layer = 0;
+            other.GetComponent<Heart>().enabled = false;
+            other.GetComponent<HeartController2D>().enabled = false;
+            other.transform.position = transform.position;
+            anim.SetBool("startAnimation", true);
+        }
     }
 }

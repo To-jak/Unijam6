@@ -12,9 +12,14 @@ public class Health : MonoBehaviour {
     public HealthBar healthBar;
     public HeartBar heartBar;
 
+    private AudioSource source;
+    public AudioClip mort;
+
+
     void Awake()
     {
         Init();
+        source = GetComponent<AudioSource>();
     }
 
     public void Init()
@@ -24,6 +29,9 @@ public class Health : MonoBehaviour {
 
         healthBar.Init();
         UpdateHealthDisplay();
+
+        healthBar.gameObject.SetActive(true);
+        heartBar.gameObject.SetActive(false);
     }
 
     public int TakeDamage(int damage)
@@ -39,7 +47,8 @@ public class Health : MonoBehaviour {
 
         if (currentHealthPoints == 0)
         {
-            Die();
+            source.PlayOneShot(mort, 1F);
+            Invoke("Die",1);
             return 0;
         }
         return currentHealthPoints;

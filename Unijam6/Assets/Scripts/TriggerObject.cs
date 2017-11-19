@@ -10,9 +10,9 @@ public class TriggerObject : MonoBehaviour {
 
 	void Update () {
         bool allTriggers = true;
-        foreach (TriggerController2D trigger in triggers)
+        for (int i = 0; i < triggers.Length; i++)
         {
-            allTriggers &= trigger.triggered;
+            allTriggers &= triggers[i].triggered;
         }
 
         if (allTriggers && !triggered)

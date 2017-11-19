@@ -25,12 +25,14 @@ public class GameManager : MonoBehaviour {
     void InitPlayer()
     {
         player.transform.position = startPosition;
+        player.GetComponent<Player>().Init();
         player.GetComponent<Health>().Init();
     }
 
     public void PlayerDead()
     {
-        InitPlayer();
+        player.GetComponent<Player>().enabled = false;
+        Invoke("InitPlayer", 1f);
     }
 
     public void EndLevel()
