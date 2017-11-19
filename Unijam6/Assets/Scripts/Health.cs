@@ -9,16 +9,11 @@ public class Health : MonoBehaviour {
     int maxHealthPoints;
     int currentHealthPoints;
 
-    HealthBar healthBar;
-    HeartBar heartBar;
+    public HealthBar healthBar;
+    public HeartBar heartBar;
 
-    void Start()
+    void Awake()
     {
-        healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<HealthBar>();
-        heartBar = GameObject.FindGameObjectWithTag("HeartBar").GetComponent<HeartBar>();
-
-        heartBar.gameObject.SetActive(false);
-
         Init();
     }
 

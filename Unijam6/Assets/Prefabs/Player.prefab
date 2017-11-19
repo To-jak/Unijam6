@@ -40,8 +40,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1221793234185030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: 1, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalPosition: {x: -2.722937, y: -2.0414624, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -62,7 +62,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.65, y: 3.58}
+    oldSize: {x: 0.825, y: 1.79}
     newSize: {x: 1.65, y: 3.58}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -70,10 +70,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.8, y: 1.8}
-      - {x: -0.8, y: -1.8}
-      - {x: 0.8, y: -1.8}
-      - {x: 0.8, y: 1.8}
+    - - {x: -0.4, y: 0.9}
+      - {x: -0.4, y: -0.9}
+      - {x: 0.4, y: -0.9}
+      - {x: 0.4, y: 0.9}
 --- !u!61 &61912377587547554
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -90,14 +90,14 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.65, y: 3.58}
+    oldSize: {x: 0.825, y: 1.79}
     newSize: {x: 1.65, y: 3.58}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.63, y: 3.59}
+  m_Size: {x: 0.8, y: 1.8}
   m_EdgeRadius: 0
 --- !u!95 &95400771103780416
 Animator:
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collisionMask:
     serializedVersion: 2
-    m_Bits: 1280
+    m_Bits: 256
   horizontalRayCount: 4
   verticalRayCount: 4
 --- !u!114 &114511522990268258
@@ -146,6 +146,13 @@ MonoBehaviour:
   playerState: 0
   jumpHeight: 4
   timeToJumpApex: 0.4
+  moveSpeed: 8
+  healthBarCollisionMask:
+    serializedVersion: 2
+    m_Bits: 256
+  heartBarCollisionMask:
+    serializedVersion: 2
+    m_Bits: 1280
 --- !u!114 &114933901833788896
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -157,6 +164,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a02fcc0491dd174d87865e9ad47411f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthBar: {fileID: 0}
+  heartBar: {fileID: 0}
 --- !u!212 &212181104832602612
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -17,32 +17,61 @@ public class HeartBar : MonoBehaviour {
     float maxThrowVelocity = 2f;
     float maxRange = 10f;
     GameObject throwableHeart;
-    bool throwing;
+    public bool throwing;
+    Animator anim;
+
+    int nbHearts;
     
+    void Start ()
+    {
+        anim = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
+    }
+
     void Awake () {
         player = GameObject.FindGameObjectWithTag("Player");
 
         heartList = new List<GameObject>();
     }
 
+    private void OnEnable()
+    {
+        UpdateDisplay(nbHearts);
+        for (int i = 0; i < heartList.Count; i++)
+        {
+            heartList[i].gameObject.SetActive(true);
+        }
+    }
+
+    private void OnDisable ()
+    {
+        for (int i = 0; i < heartList.Count; i++)
+        {
+            heartList[i].gameObject.SetActive(false);
+        }
+    }
+
     public void UpdateDisplay (int nbHearts)
     {
-        if (nbHearts < heartList.Count)
+        this.nbHearts = nbHearts;
+        if (heartList != null)
         {
-            int n = heartList.Count - nbHearts;
-            for (int i = 0; i < n; i++)
+            if (nbHearts < heartList.Count)
             {
-                GameObject heart = heartList[heartList.Count - 1];
-                heartList.RemoveAt(heartList.Count - 1);
-                Destroy(heart);
+                int n = heartList.Count - nbHearts;
+                for (int i = 0; i < n; i++)
+                {
+                    GameObject heart = heartList[heartList.Count - 1];
+                    heartList.RemoveAt(heartList.Count - 1);
+                    Destroy(heart);
+                }
             }
-        }
-        else if (nbHearts > heartList.Count)
-        {
-            int n = nbHearts - heartList.Count;
-            for (int i = 0; i < n; i++)
+            else if (nbHearts > heartList.Count)
             {
-                heartList.Add(Instantiate(heartPrefab));
+                int n = nbHearts - heartList.Count;
+                for (int i = 0; i < n; i++)
+                {
+                    heartList.Add(Instantiate(heartPrefab));
+                }
             }
         }
     }
@@ -58,7 +87,7 @@ public class HeartBar : MonoBehaviour {
             }
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.Tab))
         {
             if (heartList.Count > 0)
             {
@@ -66,6 +95,7 @@ public class HeartBar : MonoBehaviour {
                 RemoveHeart();
                 throwableHeart.transform.position = player.transform.position;
                 throwing = true;
+                throwableHeart.SetActive(false);
             }
         }
 
@@ -78,19 +108,27 @@ public class HeartBar : MonoBehaviour {
         {
             if (heartList.Count >= 0 && throwing)
             {
-                Vector3 dist = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position);
-                Vector3 dir = Mathf.Clamp(dist.magnitude, 0f, maxRange) * maxThrowVelocity * dist.normalized;
-                throwableHeart.GetComponent<Heart>().SetVelocity(new Vector3(dir.x, dir.y, 0f));
-                throwableHeart.GetComponent<Heart>().SetState(Heart.HeartState.inWorld);
-                throwing = false;
+                anim.SetBool("HeartLancer", true);
+                Invoke("ThrowHeart", 0.2f);
             }
         }
+    }
+
+    void ThrowHeart()
+    {
+        throwableHeart.SetActive(true);
+        Vector3 dist = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position);
+        Vector3 dir = Mathf.Clamp(dist.magnitude, 0f, maxRange) * maxThrowVelocity * dist.normalized;
+        throwableHeart.GetComponent<Heart>().SetVelocity(new Vector3(dir.x, dir.y, 0f));
+        throwableHeart.GetComponent<Heart>().SetState(Heart.HeartState.inWorld);
+        throwing = false;
+        
     }
 
     public void AddHeart (GameObject newHeart)
     {
         Destroy(newHeart);
-        heartList.Add(Instantiate(heartPrefab));
+        heartList.Add(Instantiate(heartPrefab, transform.position + ((heartList.Count - (heartList.Count / 2f - 0.5f)) * spacing) * Vector3.right, Quaternion.identity));
         player.GetComponent<Health>().AddHealthUnits(1);
     }
 

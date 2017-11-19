@@ -4,10 +4,10 @@ using System.Collections;
 [RequireComponent(typeof(PlayerController2D))]
 public class Player : MonoBehaviour
 {
-    public bool saut = false;
-    public bool courseGauche = false;
-    public bool courseDroite = false;
-    public bool repos = false;
+    public enum PlayerState { HealthBar, HeartBar };
+
+    public PlayerState playerState = PlayerState.HealthBar;
+    private bool courseDroite = true;
 
     public float jumpHeight = 4;
     public float timeToJumpApex = .4f;
@@ -27,6 +27,11 @@ public class Player : MonoBehaviour
     float hurtCooldown = 0.5f;
     float hurtTimer;
 
+    private float actualScale;
+    private bool lancer;
+
+    Animator anim;
+
     void Start()
     {
         controller = GetComponent<PlayerController2D>();
@@ -35,22 +40,22 @@ public class Player : MonoBehaviour
         jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
 
         health = GetComponent<Health>();
+
+        anim = GetComponent<Animator>();
+        actualScale = transform.localScale.x;
     }
 
     void Update()
     {
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //      Gestion joueur                                                                                  //
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        lancer = GetComponent<Health>().heartBar.throwing;
+        if (courseDroite)
         {
-            // changer sprite, valeurs de vitesse/saut, healthbar/hearts
+            transform.localScale = new Vector3(actualScale, transform.localScale.y, transform.localScale.z);
         }
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //      Déplacement                                                                                     //
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        else
+        {
+            transform.localScale = new Vector3(-actualScale, transform.localScale.y, transform.localScale.z);
+        }
 
         float targetVelocityX;
 
@@ -58,26 +63,54 @@ public class Player : MonoBehaviour
 
         if (hurtTimer >= hurtCooldown)
         {
-            SetRepos();
+            if (playerState == PlayerState.HealthBar)
+            {
+                SetRepos();
+            }
+            else
+            {
+                SetHeartRepos();
+            }
+            
+
             if (controller.collisions.above || controller.collisions.below)
             {
                 velocity.y = 0;
             }
 
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-            if (Input.GetAxisRaw("Horizontal") > 0)
+            if (Input.GetAxisRaw("Horizontal") != 0)
             {
-                SetCourseDroite();
+                if (playerState == PlayerState.HealthBar)
+                {
+                    SetCourse();
+                }
+                else
+                {
+                    SetHeartCourse();
+                }
+                if (Input.GetAxisRaw("Horizontal") > 0)
+                {
+                    courseDroite = true;
+                }
+                else
+                {
+                    courseDroite = false;
+                }
             }
-            if (Input.GetAxisRaw("Horizontal") < 0)
-            {
-                SetCourseGauche();
-            }
+            
 
             if (Input.GetButtonDown("Jump") && controller.collisions.below)
             {
                 velocity.y = jumpVelocity;
-                SetSaut();
+                if (playerState == PlayerState.HealthBar)
+                {
+                    SetSaut();
+                }
+                else
+                {
+                    SetHeartSaut();
+                }
             }
 
             targetVelocityX = input.x * moveSpeed;
@@ -90,6 +123,23 @@ public class Player : MonoBehaviour
         velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void SwitchState(PlayerState state)
+    {
+        ResetBool();
+        switch (state)
+        {
+            case (PlayerState.HealthBar):
+                playerState = PlayerState.HeartBar;
+                anim.SetBool("HeartRepos", true);
+                break;
+            case (PlayerState.HeartBar):
+                playerState = PlayerState.HealthBar;
+                anim.SetBool("NormalRepos", true);
+                break;
+        }
+        ResetBool();
     }
 
     public void Hurt(int damage, Vector3 dir)
@@ -107,32 +157,54 @@ public class Player : MonoBehaviour
 
     public void SetSaut()
     {
-        saut = true;
-        courseDroite = false;
-        courseGauche = false;
-        repos = false;
+        anim.SetBool("NormalSaut", true);
+        anim.SetBool("NormalCourse", false);
+        anim.SetBool("NormalRepos", false);
     }
-    public void SetCourseDroite()
+    public void SetCourse()
     {
-        saut = false;
-        courseDroite = true;
-        courseGauche = false;
-        repos = false;
-    }
-    public void SetCourseGauche()
-    {
-        saut = false;
-        courseDroite = false;
-        courseGauche = true;
-        repos = false;
+        anim.SetBool("NormalSaut", false);
+        anim.SetBool("NormalCourse", true);
+        anim.SetBool("NormalRepos", false);
     }
 
     public void SetRepos()
     {
-        saut = false;
-        courseDroite = false;
-        courseGauche = false;
-        repos = true;
+        anim.SetBool("NormalSaut", false);
+        anim.SetBool("NormalCourse", false);
+        anim.SetBool("NormalRepos", true);
+    }
+
+    public void SetHeartCourse()
+    {
+        anim.SetBool("HeartSaut", false);
+        anim.SetBool("HeartCourse", true);
+        anim.SetBool("HeartRepos", false);
+    }
+
+    public void SetHeartRepos()
+    {
+        anim.SetBool("HeartSaut", false);
+        anim.SetBool("HeartCourse", false);
+        anim.SetBool("HeartRepos", true);
+    }
+
+    public void SetHeartSaut() {
+        anim.SetBool("HeartSaut", true);
+        anim.SetBool("HeartCourse", false);
+        anim.SetBool("HeartRepos", false);
+    }
+
+    public void ResetBool()
+    {
+        anim.SetBool("HeartSaut", false);
+        anim.SetBool("HeartCourse", false);
+        anim.SetBool("HeartRepos", false);
+
+        anim.SetBool("NormalSaut", false);
+        anim.SetBool("NormalCourse", false);
+        anim.SetBool("NormalRepos", false);
+
     }
 }
 

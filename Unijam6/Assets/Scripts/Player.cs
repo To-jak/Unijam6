@@ -13,7 +13,10 @@ public class Player : MonoBehaviour
     public float timeToJumpApex = .4f;
     float accelerationTimeAirborne = .2f;
     float accelerationTimeGrounded = .1f;
-    float moveSpeed = 6;
+    public float moveSpeed = 6;
+
+    public LayerMask healthBarCollisionMask;
+    public LayerMask heartBarCollisionMask;
 
     float gravity;
     float jumpVelocity;
@@ -27,7 +30,10 @@ public class Player : MonoBehaviour
     float hurtCooldown = 0.5f;
     float hurtTimer;
 
+    private float actualScale;
+
     Animator anim;
+    private bool lancer;
 
     void Start()
     {
@@ -39,13 +45,24 @@ public class Player : MonoBehaviour
         health = GetComponent<Health>();
 
         anim = GetComponent<Animator>();
+        actualScale = transform.localScale.x;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        lancer = GetComponent<Health>().heartBar.throwing;
+        if (anim.GetBool("HeartLancer"))
         {
-            SwitchState();
+            SetHeartRepos();
+        }
+
+        if (courseDroite)
+        {
+            transform.localScale = new Vector3(actualScale, transform.localScale.y, transform.localScale.z);
+        }
+        else
+        {
+            transform.localScale = new Vector3(-actualScale, transform.localScale.y, transform.localScale.z);
         }
 
         float targetVelocityX;
@@ -54,26 +71,22 @@ public class Player : MonoBehaviour
 
         if (hurtTimer >= hurtCooldown)
         {
-            if (playerState == PlayerState.HealthBar)
+            if (controller.collisions.below)
             {
-                if (courseDroite)
+                if (playerState == PlayerState.HealthBar)
                 {
-                    SetReposDroite();
+                    SetRepos();
                 }
                 else
                 {
-                    SetReposGauche();
-                }
-            }
-            else
-            {
-                if (courseDroite)
-                {
-                    SetHeartReposDroite();
-                }
-                else
-                {
-                    SetHeartReposGauche();
+                    if (lancer)
+                    {
+                        SetHeartLancerRepos();
+                    }
+                    else
+                    {
+                        SetHeartRepos();
+                    }
                 }
             }
             
@@ -84,35 +97,46 @@ public class Player : MonoBehaviour
             }
 
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-            if (Input.GetAxisRaw("Horizontal") > 0)
+            if (Input.GetAxisRaw("Horizontal") != 0)
             {
                 if (playerState == PlayerState.HealthBar)
                 {
-                    SetCourseDroite();
+                    SetCourse();
                 }
                 else
                 {
-                    SetHeartCourseDroite();
+                    if (lancer)
+                    {
+                        SetHeartLancerCourse();
+                    }
+                    else
+                    {
+                        SetHeartCourse();
+                    }
                 }
-                courseDroite = true;
-            }
-            if (Input.GetAxisRaw("Horizontal") < 0)
-            {
-                if (playerState == PlayerState.HealthBar)
+                if (Input.GetAxisRaw("Horizontal") > 0)
                 {
-                    SetCourseGauche();
+                    courseDroite = true;
                 }
                 else
                 {
-                    SetHeartCourseGauche();
+                    courseDroite = false;
                 }
-                courseDroite = false;
             }
+            
 
             if (Input.GetButtonDown("Jump") && controller.collisions.below)
             {
-                velocity.y = jumpVelocity;
-                SetSaut();
+                
+                if (playerState == PlayerState.HealthBar)
+                {
+                    SetSaut();
+                    velocity.y = jumpVelocity;
+                }
+                else
+                {
+                    SetHeartSaut();
+                }
             }
 
             targetVelocityX = input.x * moveSpeed;
@@ -125,20 +149,23 @@ public class Player : MonoBehaviour
         velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+
     }
 
-    public void SwitchState()
+    public void SwitchState(PlayerState state)
     {
         ResetBool();
-        switch (playerState)
+        switch (state)
         {
             case (PlayerState.HealthBar):
-                playerState = PlayerState.HeartBar;
-                anim.SetBool("HeartReposDroite", true);
+                playerState = PlayerState.HealthBar;
+                controller.collisionMask = healthBarCollisionMask;
+                anim.SetBool("NormalReposDroite", true);
                 break;
             case (PlayerState.HeartBar):
-                playerState = PlayerState.HealthBar;
-                anim.SetBool("NormalReposDroite", true);
+                playerState = PlayerState.HeartBar;
+                controller.collisionMask = heartBarCollisionMask;
+                anim.SetBool("HeartReposDroite", true);
                 break;
         }
         ResetBool();
@@ -159,94 +186,71 @@ public class Player : MonoBehaviour
 
     public void SetSaut()
     {
-        anim.SetBool("NormalSaut", false);
-        anim.SetBool("NormalCourseDroite", false);
-        anim.SetBool("NormalCourseGauche", false);
-        anim.SetBool("NormalReposDroite", false);
-        anim.SetBool("NormalReposGauche", false);
+        anim.SetBool("NormalSaut", true);
+        anim.SetBool("NormalCourse", false);
+        anim.SetBool("NormalRepos", false);
     }
-    public void SetCourseDroite()
+    public void SetCourse()
     {
         anim.SetBool("NormalSaut", false);
-        anim.SetBool("NormalCourseDroite", true);
-        anim.SetBool("NormalCourseGauche", false);
-        anim.SetBool("NormalReposDroite", false);
-        anim.SetBool("NormalReposGauche", false);
-    }
-    public void SetCourseGauche()
-    {
-        anim.SetBool("NormalSaut", false);
-        anim.SetBool("NormalCourseDroite", false);
-        anim.SetBool("NormalCourseGauche", true);
-        anim.SetBool("NormalReposDroite", false);
-        anim.SetBool("NormalReposGauche", false);
+        anim.SetBool("NormalCourse", true);
+        anim.SetBool("NormalRepos", false);
     }
 
-    public void SetReposDroite()
+    public void SetRepos()
     {
         anim.SetBool("NormalSaut", false);
-        anim.SetBool("NormalCourseDroite", false);
-        anim.SetBool("NormalCourseGauche", false);
-        anim.SetBool("NormalReposDroite", true);
-        anim.SetBool("NormalReposGauche", false);
-    }
-    public void SetReposGauche()
-    {
-        anim.SetBool("NormalSaut", false);
-        anim.SetBool("NormalCourseDroite", false);
-        anim.SetBool("NormalCourseGauche", false);
-        anim.SetBool("NormalReposDroite", false);
-        anim.SetBool("NormalReposGauche", true);
+        anim.SetBool("NormalCourse", false);
+        anim.SetBool("NormalRepos", true);
     }
 
-    public void SetHeartCourseDroite()
+    public void SetHeartCourse()
     {
-        anim.SetBool("HeartSaut", false);
-        anim.SetBool("HeartCourseDroite", true);
-        anim.SetBool("HeartCourseGauche", false);
-        anim.SetBool("HeartReposDroite", false);
-        anim.SetBool("HeartReposGauche", false);
-    }
-    public void SetHeartCourseGauche()
-    {
-        anim.SetBool("HeartSaut", false);
-        anim.SetBool("HeartCourseDroite", false);
-        anim.SetBool("HeartCourseGauche", true);
-        anim.SetBool("HeartReposDroite", false);
-        anim.SetBool("HeartReposGauche", false);
+        anim.SetBool("HeartCourse", true);
+        anim.SetBool("HeartRepos", false);
+        anim.SetBool("HeartLancerRepos", false);
+        anim.SetBool("HeartLancerCourse", false);
     }
 
-    public void SetHeartReposDroite()
+    public void SetHeartRepos()
     {
-        anim.SetBool("HeartSaut", false);
-        anim.SetBool("HeartCourseDroite", false);
-        anim.SetBool("HeartCourseGauche", false);
-        anim.SetBool("HeartReposDroite", true);
-        anim.SetBool("HeartReposGauche", false);
+        anim.SetBool("HeartCourse", false);
+        anim.SetBool("HeartRepos", true);
+        anim.SetBool("HeartLancerRepos", false);
+        anim.SetBool("HeartLancerCourse", false);
     }
-    public void SetHeartReposGauche()
+    public void SetHeartSaut()
     {
-        anim.SetBool("HeartSaut", false);
-        anim.SetBool("HeartCourseDroite", false);
-        anim.SetBool("HeartCourseGauche", false);
-        anim.SetBool("HeartReposDroite", false);
-        anim.SetBool("HeartReposGauche", true);
+        anim.SetBool("HeartSaut", true);
+    }
+
+    public void SetHeartLancerRepos() {
+
+        anim.SetBool("HeartCourse", false);
+        anim.SetBool("HeartRepos", false);
+        anim.SetBool("HeartLancerRepos", true);
+        anim.SetBool("HeartLancerCourse", false);
+    }
+
+    public void SetHeartLancerCourse()
+    {
+        anim.SetBool("HeartRepos", false);
+        anim.SetBool("HeartCourse", false);
+        anim.SetBool("HeartLancerRepos", false);
+        anim.SetBool("HeartLancerCourse", true);
     }
 
     public void ResetBool()
     {
-        anim.SetBool("HeartSaut", false);
-        anim.SetBool("HeartCourseDroite", false);
-        anim.SetBool("HeartCourseGauche", false);
-        anim.SetBool("HeartReposDroite", false);
-        anim.SetBool("HeartReposGauche", false);
+        anim.SetBool("HeartLancerRepos", false);
+        anim.SetBool("HeartLancerCourse", false);
+        anim.SetBool("HeartCourse", false);
+        anim.SetBool("HeartRepos", false);
 
         anim.SetBool("NormalSaut", false);
-        anim.SetBool("NormalCourseDroite", false);
-        anim.SetBool("NormalCourseGauche", false);
-        anim.SetBool("NormalReposDroite", false);
-        anim.SetBool("NormalReposGauche", false);
-
+        anim.SetBool("NormalCourse", false);
+        anim.SetBool("NormalRepos", false);
     }
+
 }
 

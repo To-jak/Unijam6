@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Controller2D))]
+[RequireComponent(typeof(HeartController2D))]
 public class Heart : MonoBehaviour{
 
     public enum HeartState { inBar, onPlayer, inWorld };
@@ -36,6 +36,10 @@ public class Heart : MonoBehaviour{
             velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? 0.4f : 2f);
             velocity.y += gravity * Time.deltaTime;
             controller.Move(velocity * Time.deltaTime);
+        }
+        else if (state == HeartState.inBar)
+        {
+            controller.Move(Vector3.zero);
         }
     }
 

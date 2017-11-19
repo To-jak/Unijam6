@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class TriggerController2D : Controller2D {
 
+    public bool oneShotTrigger;
     public bool triggered = false;
+
+    private Animator anim;
+
+    public void Start()
+    {
+        base.Start();
+        anim = GetComponent<Animator>();
+    }
 
     public void Update()
     {
         UpdateRaycastOrigins();
         collisions.Reset();
         
-        VerticalCollisions();
+        VerticalCollisions(-1f);
+        VerticalCollisions(1f);
         HorizontalCollisions(-1f);
         HorizontalCollisions(1f);
     }
@@ -37,12 +47,16 @@ public class TriggerController2D : Controller2D {
 
                 ProcessCollision(hit.collider.gameObject, directionX * Vector3.right);
             }
+            else
+            {
+                if (!oneShotTrigger)
+                    triggered = false;
+            }
         }
     }
 
-    protected void VerticalCollisions()
+    protected void VerticalCollisions(float directionY)
     {
-        float directionY = 1;
         float rayLength = skinWidth;
 
         for (int i = 0; i < verticalRayCount; i++)
@@ -62,16 +76,17 @@ public class TriggerController2D : Controller2D {
 
                 ProcessCollision(hit.collider.gameObject, directionY * Vector3.up);
             }
+            else
+            {
+                if (!oneShotTrigger)
+                    triggered = false;
+            }
         }
     }
 
     protected override void ProcessCollision(GameObject other, Vector3 dir)
     {
-        switch (other.tag)
-        {
-            default:
-                triggered = true;
-                break;
-        }
+        triggered = true;
+        anim.SetBool("startAnimation", true);
     }
 }

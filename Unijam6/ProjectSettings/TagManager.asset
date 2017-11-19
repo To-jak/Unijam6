@@ -9,6 +9,7 @@ TagManager:
   - HealthBar
   - HeartBar
   - Heart
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -20,10 +21,10 @@ TagManager:
   - 
   - Solids
   - NonePhysic
-  - Items
+  - Hearts
   - Player
-  - 
-  - 
+  - Projectiles
+  - Bouclier
   - 
   - 
   - 

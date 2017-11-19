@@ -22,14 +22,22 @@ public class HealthBar : MonoBehaviour {
     GameObject player;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        Init();
+        transform.position = player.transform.position + relativePostion;
 	}
+
+    void OnEnable()
+    {
+        Init();
+    }
 
     public void Init()
     {
+        if (player == null)
+            player = GameObject.FindGameObjectWithTag("Player");
+        transform.position = player.transform.position + relativePostion;
         barState = 0;
     }
 
@@ -78,7 +86,7 @@ public class HealthBar : MonoBehaviour {
         if (barState == 0)
         {
             gameObject.transform.position = Vector3.SmoothDamp(transform.position, player.transform.position + relativePostion, ref velocity, smoothTime_ShortDistance);
-            transform.GetChild(0).gameObject.layer = 9;
+            transform.GetChild(0).gameObject.layer = 13;
         }   
         if (barState == 1)
         {
@@ -86,7 +94,7 @@ public class HealthBar : MonoBehaviour {
 
             gameObject.transform.position = new Vector3(point.x, point.y, 0);
 
-            transform.GetChild(0).gameObject.layer = 9;
+            transform.GetChild(0).gameObject.layer = 0;
         }
         if(barState == 2)
         {
@@ -109,6 +117,7 @@ public class HealthBar : MonoBehaviour {
             float rot_z = Mathf.Atan2(dist.y, dist.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
             transform.position = player.transform.position + dist;
+            transform.GetChild(0).gameObject.layer = 13;
         }
     }
 }

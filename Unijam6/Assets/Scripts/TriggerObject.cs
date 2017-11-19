@@ -6,7 +6,7 @@ public class TriggerObject : MonoBehaviour {
 
     public TriggerController2D[] triggers;
 
-    bool triggered;
+    protected bool triggered;
 
 	void Update () {
         bool allTriggers = true;
@@ -19,7 +19,7 @@ public class TriggerObject : MonoBehaviour {
         {
             Trigger(true);
         }
-        else if (triggered && allTriggers)
+        else if (triggered && !allTriggers)
         {
             Trigger(false);
         }

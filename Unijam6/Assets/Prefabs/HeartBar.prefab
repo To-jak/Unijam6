@@ -56,6 +56,7 @@ MonoBehaviour:
     type: 2}
   relativePosition: {x: 0, y: 2, z: 0}
   spacing: 0.7
+  throwing: 0
 --- !u!120 &120729223282150388
 LineRenderer:
   m_ObjectHideFlags: 1

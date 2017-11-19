@@ -14,23 +14,37 @@ public class CircularMenu : MonoBehaviour
     public int menuItems;
     public int CurMenuItem;
     private int OldMenuItem;
+
+    public GameObject player;
+    public GameObject healthBar;
+    public GameObject heartBar;
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         menuItems = buttons.Count;
         foreach(MenuButton button in buttons)
         {
             button.sceneimage.color = button.NormalColor;
         }
+        player = GameObject.FindGameObjectWithTag("Player");
+        healthBar = GameObject.FindGameObjectWithTag("HealthBar");
+        heartBar = GameObject.FindGameObjectWithTag("HeartBar");
         CurMenuItem = 0;
         OldMenuItem = 0;
+    }
+
+    private void Start()
+    {
+        healthBar.SetActive(true);
+        heartBar.SetActive(false);
+        player.GetComponent<Player>().SwitchState(Player.PlayerState.HealthBar);
     }
 
     // Update is called once per frame
     void Update()
     {
         GetCurrentMenuItem();
-        if (Input.GetButtonDown("fire1"))
+        if (Input.GetMouseButtonDown(0))
         {
             ButtonAction();
         }
@@ -44,13 +58,14 @@ public class CircularMenu : MonoBehaviour
 
         float angle = (Mathf.Atan2(fromVector2M.y - centercircle.y, fromVector2M.x - centercircle.x) - Mathf.Atan2(toVector2M.y - centercircle.y, toVector2M.x - centercircle.x)) * Mathf.Rad2Deg;
 
-        if (angle < 0)
+        angle += 90;
+
+        if (angle > 360)
         {
-            angle += 360;
+            angle -= 360;
         }
 
         CurMenuItem = (int)(angle / (360 / menuItems));
-
         if (CurMenuItem != OldMenuItem)
         {
             buttons[OldMenuItem].sceneimage.color = buttons[OldMenuItem].NormalColor;
@@ -65,7 +80,17 @@ public class CircularMenu : MonoBehaviour
     {
         buttons[CurMenuItem].sceneimage.color = buttons[CurMenuItem].PressedColor;
         if (CurMenuItem == 0)
-            print("first button");
+        {
+            player.GetComponent<Player>().SwitchState(Player.PlayerState.HealthBar);
+            healthBar.SetActive(true);
+            heartBar.SetActive(false);
+        }
+        if (CurMenuItem == 1)
+        {
+            player.GetComponent<Player>().SwitchState(Player.PlayerState.HeartBar);
+            healthBar.SetActive(false);
+            heartBar.SetActive(true);
+        }
     }
 }
 

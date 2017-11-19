@@ -9,7 +9,7 @@ public class PlayerController2D : Controller2D
         switch (other.tag)
         {
             case "Heart":
-                if (other.GetComponent<Heart>().catchable)
+                if (GetComponent<Player>().playerState == Player.PlayerState.HeartBar && other.GetComponent<Heart>().catchable)
                     GameObject.FindGameObjectWithTag("HeartBar").GetComponent<HeartBar>().AddHeart(other);
                 break;
             case "End":

@@ -23,7 +23,7 @@ public class Controller2D : MonoBehaviour
         CalculateRaySpacing();
     }
 
-    public void Move(Vector3 velocity)
+    public virtual void Move(Vector3 velocity)
     {
         UpdateRaycastOrigins();
         collisions.Reset();
