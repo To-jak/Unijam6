@@ -14,7 +14,7 @@ public class HeartBar : MonoBehaviour {
     
     protected GameObject player;
 
-    float maxThrowVelocity = 2f;
+    float maxThrowVelocity = 3f;
     float maxRange = 10f;
     GameObject throwableHeart;
     public bool throwing;

@@ -38,7 +38,7 @@ public class TriggerDoor : TriggerObject {
         float t = 0f;
         while (t < openingDuration)
         {
-            door.position = Vector3.Lerp(door.position, newPosition, Mathf.Sin(t / (Mathf.PI / 2)));
+            door.position = Vector3.Lerp(door.position, newPosition, Mathf.Sin(t / openingDuration * (Mathf.PI / 2)));
             t += Time.deltaTime;
             yield return null;
         }

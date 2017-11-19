@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour {
         player = GameObject.FindGameObjectWithTag("Player");
 
         startPosition = GameObject.FindGameObjectWithTag("Start").transform.position;
+        player.transform.position = startPosition;
     }
 
     void InitPlayer()
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour {
     public void EndLevel()
     {
         string currentLevelName = SceneManager.GetActiveScene().name;
-        int currentLevelIndex = currentLevelName[currentLevelName.Length - 1];
+        int currentLevelIndex = (int)char.GetNumericValue(currentLevelName[currentLevelName.Length - 1]);
         
         try
         {

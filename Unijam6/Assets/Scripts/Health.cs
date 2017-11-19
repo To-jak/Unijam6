@@ -15,6 +15,7 @@ public class Health : MonoBehaviour {
     private AudioSource source;
     public AudioClip mort;
 
+    public bool isDead;
 
     void Awake()
     {
@@ -77,6 +78,7 @@ public class Health : MonoBehaviour {
 
     void Die()
     {
+        isDead = true;
         if (GameManager.instance != null)
             GameManager.instance.PlayerDead();
     }

@@ -38,6 +38,8 @@ public class Player : MonoBehaviour
     public AudioClip jumpBarre;
     private AudioSource source;
 
+    private bool dead = false;
+
     void Awake()
     {
         source = GetComponent<AudioSource>();
@@ -64,9 +66,30 @@ public class Player : MonoBehaviour
     void Update()
     {
         lancer = GetComponent<Health>().heartBar.throwing;
+        dead = GetComponent<Health>().isDead;
         if (anim.GetBool("HeartLancer"))
         {
             SetHeartRepos();
+        }
+        if (anim.GetBool("NormalMort") || anim.GetBool("HeartMort"))
+        {
+            dead = false;
+            GetComponent<Health>().isDead = true;
+        }
+        else
+        {
+            dead = GetComponent<Health>().isDead;
+            if (dead)
+            {
+                if (playerState == PlayerState.HealthBar)
+                {
+                    SetMort();
+                }
+                else
+                {
+                    SetHeartMort();
+                }
+            }
         }
 
         if (courseDroite)
@@ -203,12 +226,14 @@ public class Player : MonoBehaviour
         anim.SetBool("NormalSaut", true);
         anim.SetBool("NormalCourse", false);
         anim.SetBool("NormalRepos", false);
+        anim.SetBool("NormalMort", false);
     }
     public void SetCourse()
     {
         anim.SetBool("NormalSaut", false);
         anim.SetBool("NormalCourse", true);
         anim.SetBool("NormalRepos", false);
+        anim.SetBool("NormalMort", false);
     }
 
     public void SetRepos()
@@ -216,6 +241,14 @@ public class Player : MonoBehaviour
         anim.SetBool("NormalSaut", false);
         anim.SetBool("NormalCourse", false);
         anim.SetBool("NormalRepos", true);
+        anim.SetBool("NormalMort", false);
+    }
+    public void SetMort()
+    {
+        anim.SetBool("NormalSaut", false);
+        anim.SetBool("NormalCourse", false);
+        anim.SetBool("NormalRepos", false);
+        anim.SetBool("NormalMort", true);
     }
 
     public void SetHeartCourse()
@@ -224,6 +257,7 @@ public class Player : MonoBehaviour
         anim.SetBool("HeartRepos", false);
         anim.SetBool("HeartLancerRepos", false);
         anim.SetBool("HeartLancerCourse", false);
+        anim.SetBool("HeartMort", false);
     }
 
     public void SetHeartRepos()
@@ -232,10 +266,12 @@ public class Player : MonoBehaviour
         anim.SetBool("HeartRepos", true);
         anim.SetBool("HeartLancerRepos", false);
         anim.SetBool("HeartLancerCourse", false);
+        anim.SetBool("HeartMort", false);
     }
     public void SetHeartSaut()
     {
         anim.SetBool("HeartSaut", true);
+        anim.SetBool("HeartMort", false);
     }
 
     public void SetHeartLancerRepos() {
@@ -244,6 +280,7 @@ public class Player : MonoBehaviour
         anim.SetBool("HeartRepos", false);
         anim.SetBool("HeartLancerRepos", true);
         anim.SetBool("HeartLancerCourse", false);
+        anim.SetBool("HeartMort", false);
     }
 
     public void SetHeartLancerCourse()
@@ -252,6 +289,16 @@ public class Player : MonoBehaviour
         anim.SetBool("HeartCourse", false);
         anim.SetBool("HeartLancerRepos", false);
         anim.SetBool("HeartLancerCourse", true);
+        anim.SetBool("HeartMort", false);
+    }
+
+    public void SetHeartMort()
+    {
+        anim.SetBool("HeartRepos", false);
+        anim.SetBool("HeartCourse", false);
+        anim.SetBool("HeartLancerRepos", false);
+        anim.SetBool("HeartLancerCourse", false);
+        anim.SetBool("HeartMort", true);
     }
 
     public void ResetBool()
@@ -264,6 +311,8 @@ public class Player : MonoBehaviour
         anim.SetBool("NormalSaut", false);
         anim.SetBool("NormalCourse", false);
         anim.SetBool("NormalRepos", false);
+        anim.SetBool("NormalMort", false);
+
     }
 
 }

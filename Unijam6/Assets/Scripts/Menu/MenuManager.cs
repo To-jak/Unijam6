@@ -27,7 +27,7 @@ public class MenuManager : MonoBehaviour {
 
     public void GoToLevel(int i)
     {
-        string level = "Level" + i.ToString();
+        string level = "Level" + i;
         SceneManager.LoadScene(level);
     }
 
