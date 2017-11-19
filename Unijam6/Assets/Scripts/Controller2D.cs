@@ -4,44 +4,47 @@ using System.Collections;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Controller2D : MonoBehaviour
 {
-
     public LayerMask collisionMask;
 
-    const float skinWidth = .015f;
+    protected const float skinWidth = .015f;
     public int horizontalRayCount = 4;
     public int verticalRayCount = 4;
 
-    float horizontalRaySpacing;
-    float verticalRaySpacing;
+    protected float horizontalRaySpacing;
+    protected float verticalRaySpacing;
 
-    BoxCollider2D boxCollider2D;
-    RaycastOrigins raycastOrigins;
+    protected BoxCollider2D boxCollider2D;
+    protected RaycastOrigins raycastOrigins;
     public CollisionInfo collisions;
 
-    void Start()
+    protected virtual void OnEnable()
     {
         boxCollider2D = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
     }
 
-    public void Move(Vector3 velocity)
+    public virtual void Move(Vector3 velocity)
     {
-        UpdateRaycastOrigins();
-        collisions.Reset();
-
-        if (velocity.x != 0)
+        if (boxCollider2D != null)
         {
-            HorizontalCollisions(ref velocity);
-        }
-        if (velocity.y != 0)
-        {
-            VerticalCollisions(ref velocity);
-        }
+            UpdateRaycastOrigins();
+            collisions.Reset();
 
-        transform.Translate(velocity);
+            if (velocity.x != 0)
+            {
+                HorizontalCollisions(ref velocity);
+            }
+            if (velocity.y != 0)
+            {
+                VerticalCollisions(ref velocity);
+            }
+
+            transform.Translate(velocity);
+        }
+            
     }
 
-    void HorizontalCollisions(ref Vector3 velocity)
+    protected void HorizontalCollisions(ref Vector3 velocity)
     {
         float directionX = Mathf.Sign(velocity.x);
         float rayLength = Mathf.Abs(velocity.x) + skinWidth;
@@ -62,12 +65,12 @@ public class Controller2D : MonoBehaviour
                 collisions.left = directionX == -1;
                 collisions.right = directionX == 1;
 
-                ProcessCollision(hit.collider.gameObject);
+                ProcessCollision(hit.collider.gameObject, directionX * Vector3.right);
             }
         }
     }
 
-    void VerticalCollisions(ref Vector3 velocity)
+    protected void VerticalCollisions(ref Vector3 velocity)
     {
         float directionY = Mathf.Sign(velocity.y);
         float rayLength = Mathf.Abs(velocity.y) + skinWidth;
@@ -87,12 +90,15 @@ public class Controller2D : MonoBehaviour
 
                 collisions.below = directionY == -1;
                 collisions.above = directionY == 1;
+
+                ProcessCollision(hit.collider.gameObject, directionY * Vector3.up);
             }
         }
     }
 
-    void UpdateRaycastOrigins()
+    protected void UpdateRaycastOrigins()
     {
+
         Bounds bounds = boxCollider2D.bounds;
         bounds.Expand(skinWidth * -2);
 
@@ -102,7 +108,7 @@ public class Controller2D : MonoBehaviour
         raycastOrigins.topRight = new Vector2(bounds.max.x, bounds.max.y);
     }
 
-    void CalculateRaySpacing()
+    protected void CalculateRaySpacing()
     {
         Bounds bounds = boxCollider2D.bounds;
         bounds.Expand(skinWidth * -2);
@@ -114,22 +120,12 @@ public class Controller2D : MonoBehaviour
         verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);
     }
 
-    void ProcessCollision(GameObject other)
+    protected virtual void ProcessCollision(GameObject other, Vector3 dir)
     {
-        switch (other.tag)
-        {
-            case "End":
-                Debug.Log("End of Level"); break;
-            default:
-                break;
-        }
 
-        Obstacle obstacle = other.GetComponent<Obstacle>();
-        if (obstacle != null)
-            GetComponent<Player>().TakeDamage(obstacle.damage);
     }
 
-    struct RaycastOrigins
+    protected struct RaycastOrigins
     {
         public Vector2 topLeft, topRight;
         public Vector2 bottomLeft, bottomRight;

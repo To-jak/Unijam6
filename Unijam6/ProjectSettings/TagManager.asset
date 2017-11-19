@@ -6,6 +6,10 @@ TagManager:
   tags:
   - End
   - Start
+  - HealthBar
+  - HeartBar
+  - Heart
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -15,12 +19,12 @@ TagManager:
   - UI
   - 
   - 
-  - Ground
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Solids
+  - NonePhysic
+  - Hearts
+  - Player
+  - Projectiles
+  - Bouclier
   - 
   - 
   - 

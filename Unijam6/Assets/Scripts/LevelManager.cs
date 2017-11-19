@@ -4,26 +4,17 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour {
-    public void StartGame()
+    // gérer la liste des boutons de niveaux en fonction de la progression (débloquer lvl 2 si lvl 1 fini)
+
+    Scene[] levels;
+
+    private void Start()
     {
-        SceneManager.LoadScene("Game");
+        
     }
 
-    public void QuitGame()
+    public void DoneLevel (int i)
     {
-        Application.Quit();
-    }
-
-    public void End()
-    {
-        SceneManager.LoadScene("End");
-    }
-
-    public void LoadLevel(int i)
-    {
-        string level = "Level" + i.ToString();
-        SceneManager.LoadScene(level);
-
 
     }
 }

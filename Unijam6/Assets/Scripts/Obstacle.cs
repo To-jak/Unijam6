@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour {
 
-    public int damage = 50;
+    public int damage = 20;
 }
