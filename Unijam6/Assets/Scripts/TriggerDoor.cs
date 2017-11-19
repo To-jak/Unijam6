@@ -27,7 +27,8 @@ public class TriggerDoor : TriggerObject {
         {
             Vector3 newPosition = (triggered) ? openPosition.position : closedPosition.position;
             isMoving = true;
-            source.PlayOneShot(doorSound, 1F);
+            if (doorSound != null)
+                source.PlayOneShot(doorSound, 1F);
             StartCoroutine("MoveTo", newPosition);
             this.triggered = triggered;
         }

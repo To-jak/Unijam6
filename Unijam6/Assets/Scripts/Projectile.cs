@@ -30,7 +30,8 @@ public class Projectile : MonoBehaviour {
 		controller2D = GetComponent<ProjectileController2D>();
         transform.Rotate(0, 0, rotation);
         source = GetComponent<AudioSource>();
-        source.PlayOneShot(rockFail, 1F);
+        if (rockFail != null)
+            source.PlayOneShot(rockFail, 1F);
     }
 	
 	// Update is called once per frame
@@ -46,8 +47,10 @@ public class Projectile : MonoBehaviour {
             if (impactAnimation != null)
             {
                 hasImpacted = true;
-                source.PlayOneShot(bouclierHitProjectile, 1F);
-                source.PlayOneShot(rockHitBarre, 1F);
+                if (bouclierHitProjectile != null)
+                    source.PlayOneShot(bouclierHitProjectile, 1F);
+                if (rockHitBarre != null)
+                    source.PlayOneShot(rockHitBarre, 1F);
                 ParticleSystem newImpact = Instantiate(impactAnimation, transform.position, transform.rotation);
                 Destroy(newImpact, 3f);
             }

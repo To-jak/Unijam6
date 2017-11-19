@@ -40,6 +40,15 @@ public class Player : MonoBehaviour
 
     private bool dead = false;
 
+    private bool stepPlayed = false;
+    private bool step1 = true;
+    private int deltaLast = 0;
+    private int deltasound = 5;
+    public AudioClip step1Normal;
+    public AudioClip step2Normal;
+    public AudioClip step1Heart;
+    public AudioClip step2Heart;
+
     void Awake()
     {
         source = GetComponent<AudioSource>();
@@ -74,7 +83,7 @@ public class Player : MonoBehaviour
         if (anim.GetBool("NormalMort") || anim.GetBool("HeartMort"))
         {
             dead = false;
-            GetComponent<Health>().isDead = true;
+            GetComponent<Health>().isDead = false;
         }
         else
         {
@@ -135,6 +144,10 @@ public class Player : MonoBehaviour
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
             if (Input.GetAxisRaw("Horizontal") != 0)
             {
+                if (controller.collisions.below)
+                {
+                    SoundCourse();
+                }
                 if (playerState == PlayerState.HealthBar)
                 {
                     SetCourse();
@@ -313,6 +326,65 @@ public class Player : MonoBehaviour
         anim.SetBool("NormalRepos", false);
         anim.SetBool("NormalMort", false);
 
+    }
+
+    public void SoundCourse()
+    {
+        if (playerState == PlayerState.HealthBar)
+        {
+            if (stepPlayed)
+            {
+                deltaLast++;
+                if (deltaLast > deltasound)
+                {
+                    deltaLast = 0;
+                    stepPlayed = false;
+                }
+            }
+            else
+            {
+                if (step1)
+                {
+                    step1 = false;
+                    stepPlayed = true;
+                    source.PlayOneShot(step1Normal, 0.5F);
+                }
+                else
+                {
+                    step1 = true;
+                    stepPlayed = true;
+                    source.PlayOneShot(step2Normal, 0.5F);
+                }
+            }
+        }
+        else
+        {
+
+            if (stepPlayed)
+            {
+                deltaLast++;
+                if (deltaLast > deltasound)
+                {
+                    deltaLast = 0;
+                    stepPlayed = false;
+                }
+            }
+            else
+            {
+                if (step1)
+                {
+                    step1 = false;
+                    stepPlayed = true;
+                    source.PlayOneShot(step1Heart, 0.5F);
+                }
+                else
+                {
+                    step1 = true;
+                    stepPlayed = true;
+                    source.PlayOneShot(step2Heart, 0.5F);
+                }
+            }
+        }
     }
 
 }

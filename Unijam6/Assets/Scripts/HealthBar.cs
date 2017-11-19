@@ -66,7 +66,8 @@ public class HealthBar : MonoBehaviour {
         {
             if (barState == 0)
             {
-                source.PlayOneShot(barreClickBegin, 1F);
+                if (barreClickBegin != null)
+                    source.PlayOneShot(barreClickBegin, 1F);
             }
             if (barState == 4)
             {
@@ -90,16 +91,24 @@ public class HealthBar : MonoBehaviour {
     void OnMouseUp()
     {
         barState = 2;
-        source.PlayOneShot(barreClickEnd, 1F);
+        if (barreClickEnd != null)
+            source.PlayOneShot(barreClickEnd, 1F);
     }
     void OnMouseDown()
     {
-        source.PlayOneShot(barreClickBegin, 1F);
+        if (barreClickBegin != null)
+            source.PlayOneShot(barreClickBegin, 1F);
     }
 
     void OnMouseEnter()
     {
-        source.PlayOneShot(barreHover, 1F);
+        if (barreHover != null)
+            source.PlayOneShot(barreHover, 0.3F);
+    }
+
+    private void OnBecameInvisible()
+    {
+        barState = 3;
     }
 
     void ProcessState()

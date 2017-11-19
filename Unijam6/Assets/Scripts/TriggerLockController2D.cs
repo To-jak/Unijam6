@@ -7,6 +7,8 @@ public class TriggerLockController2D : TriggerController2D {
     private AudioSource source;
     public AudioClip interrupteur;
 
+    public GameObject key;
+
     void Awake()
     {
 
@@ -71,12 +73,20 @@ public class TriggerLockController2D : TriggerController2D {
         if (!triggered)
         {
             triggered = true;
+            key = other;
             other.layer = 0;
             other.GetComponent<Heart>().enabled = false;
             other.GetComponent<HeartController2D>().enabled = false;
             other.transform.position = transform.position;
             anim.SetBool("startAnimation", true);
-            source.PlayOneShot(interrupteur, 1F);
+            if (interrupteur != null)
+                source.PlayOneShot(interrupteur, 1F);
         }
+    }
+
+    public void Clear()
+    {
+        anim.SetBool("restartAnimation", true);
+        triggered = false;
     }
 }

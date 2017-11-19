@@ -15,20 +15,9 @@ public class MenuManager : MonoBehaviour {
             throw new System.Exception("More than one instance of MenuManager");
     }
 
-    public void GoToMenu()
+    public void GoToScene(int i)
     {
-        SceneManager.LoadScene("Menu");
-    }
-
-    public void GoToLevelSelection()
-	{
-		SceneManager.LoadScene("LevelSelection");
-	}
-
-    public void GoToLevel(int i)
-    {
-        string level = "Level" + i;
-        SceneManager.LoadScene(level);
+        SceneManager.LoadScene(i);
     }
 
     public void Quit()

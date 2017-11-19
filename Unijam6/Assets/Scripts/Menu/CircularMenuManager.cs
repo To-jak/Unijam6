@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class CircularMenuManager : MonoBehaviour {
 
-    GameObject CircularMenu;
+    public GameObject circularMenu;
     public GameObject player;
 
     private AudioSource source;
@@ -19,32 +19,36 @@ public class CircularMenuManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
-        CircularMenu = transform.GetChild(0).gameObject;
-        CircularMenu.SetActive(false);
+        circularMenu.SetActive(false);
+        circularMenu.GetComponent<CircularMenu>().manager = this;
         player = GameObject.FindGameObjectWithTag("Player");
     }
 	
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKey(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (!firsthit)
+            if (!firsthit && swapMenu != null)
             {
                 source.PlayOneShot(swapMenu, 1F);
                 firsthit = true;
             }
             Time.timeScale = 0;
             player.GetComponent<Player>().enabled = false;
-            CircularMenu.SetActive(true);
+            circularMenu.SetActive(true);
         }
-        else
+        if (Input.GetKeyUp(KeyCode.Tab))
         {
-            firsthit = false;
-            Time.timeScale = 1;
-            player.GetComponent<Player>().enabled = true;
-            CircularMenu.SetActive(false);
+            HideMenu();
         }
 	}
+
+    public void HideMenu()
+    {
+        firsthit = false;
+        Time.timeScale = 1;
+        player.GetComponent<Player>().enabled = true;
+        circularMenu.SetActive(false);
+    }
 }

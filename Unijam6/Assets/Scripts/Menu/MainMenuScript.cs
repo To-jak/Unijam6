@@ -14,7 +14,13 @@ public class MainMenuScript : MonoBehaviour
     public int menuItems;
     public int CurMenuItem;
     private int OldMenuItem;
-    
+
+    private AudioSource source;
+    public AudioClip menuPlay;
+    public AudioClip menuTheme;
+    public AudioClip menuHover;
+    private bool themePlayed = false;
+
     void Awake()
     {
         menuItems = buttons.Count;
@@ -24,16 +30,23 @@ public class MainMenuScript : MonoBehaviour
         }
         CurMenuItem = 0;
         OldMenuItem = 0;
+        source = GetComponent<AudioSource>();
+        
     }
 
     private void Start()
     {
-
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!themePlayed)
+        {
+            source.PlayOneShot(menuTheme, 1F);
+            themePlayed = true;
+        }
         GetCurrentMenuItem();
         if (Input.GetMouseButtonDown(0))
         {
@@ -62,6 +75,7 @@ public class MainMenuScript : MonoBehaviour
             buttons[OldMenuItem].sceneimage.color = buttons[OldMenuItem].NormalColor;
             OldMenuItem = CurMenuItem;
             buttons[CurMenuItem].sceneimage.color = buttons[CurMenuItem].HightLightedColor;
+            source.PlayOneShot(menuHover, 1F);
 
         }
 
@@ -72,7 +86,8 @@ public class MainMenuScript : MonoBehaviour
         buttons[CurMenuItem].sceneimage.color = buttons[CurMenuItem].PressedColor;
         if (CurMenuItem == 0)
         {
-            MenuManager.instance.GoToLevel(1);
+            source.PlayOneShot(menuPlay, 1F);
+            MenuManager.instance.GoToScene(1);
         }
         if (CurMenuItem == 1)
         {

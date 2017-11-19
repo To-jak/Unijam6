@@ -14,13 +14,18 @@ public class Health : MonoBehaviour {
 
     private AudioSource source;
     public AudioClip mort;
+    public AudioClip hitNormal;
+    public AudioClip hitHeart;
 
-    public bool isDead;
+    public bool isDead = false;
+
+    Animator anim;
 
     void Awake()
     {
         Init();
         source = GetComponent<AudioSource>();
+        anim = GetComponent<Animator>();
     }
 
     public void Init()
@@ -46,11 +51,24 @@ public class Health : MonoBehaviour {
             Debug.Log("Took " + damage + " damage");
             Debug.Log("Current health " + currentHealthPoints);
 
+            if (GetComponent<Player>().playerState == Player.PlayerState.HealthBar)
+            {
+                if (hitNormal != null)
+                    source.PlayOneShot(hitNormal, 1F);
+            }
+            else
+            {
+                if (hitHeart != null)
+                    source.PlayOneShot(hitHeart, 1F);
+            }
+
             UpdateHealthDisplay();
 
             if (currentHealthPoints == 0)
             {
-                source.PlayOneShot(mort, 1F);
+                isDead = true;
+                if (mort != null)
+                    source.PlayOneShot(mort, 1F);
                 Invoke("Die", 1);
                 return 0;
             }
@@ -68,6 +86,13 @@ public class Health : MonoBehaviour {
     {
         currentHealthPoints = Mathf.Clamp(currentHealthPoints - healthUnits * healthPointsPerUnit, 0, maxHealthPoints);
         UpdateHealthDisplay();
+        if (currentHealthPoints == 0)
+        {
+            isDead = true;
+            if (mort != null)
+                source.PlayOneShot(mort, 1F);
+            Invoke("Die", 1);
+        }
     }
 
     void UpdateHealthDisplay()
@@ -78,7 +103,7 @@ public class Health : MonoBehaviour {
 
     void Die()
     {
-        isDead = true;
+        
         if (GameManager.instance != null)
             GameManager.instance.PlayerDead();
     }

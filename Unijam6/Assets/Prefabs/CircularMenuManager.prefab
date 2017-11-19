@@ -285,7 +285,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b8d54f01bbb8cc41803f62fac9bf404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circularMenu: {fileID: 1815228169915824}
   player: {fileID: 0}
+  swapMenu: {fileID: 0}
 --- !u!114 &114333094646256426
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -391,14 +393,14 @@ MonoBehaviour:
   buttons:
   - name: 0
     sceneimage: {fileID: 114594010412215742}
-    NormalColor: {r: 0.6985294, g: 0.6985294, b: 0.6985294, a: 1}
-    HightLightedColor: {r: 0.8088235, g: 0.8088235, b: 0.8088235, a: 1}
-    PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    NormalColor: {r: 0.9338235, g: 0.9338235, b: 0.9338235, a: 1}
+    HightLightedColor: {r: 1, g: 1, b: 1, a: 1}
+    PressedColor: {r: 0.89705884, g: 0.89705884, b: 0.89705884, a: 1}
   - name: 0
     sceneimage: {fileID: 114404885618594408}
-    NormalColor: {r: 0.6985294, g: 0.6985294, b: 0.6985294, a: 1}
-    HightLightedColor: {r: 0.8088235, g: 0.8088235, b: 0.8088235, a: 1}
-    PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    NormalColor: {r: 0.9338235, g: 0.9338235, b: 0.9338235, a: 1}
+    HightLightedColor: {r: 1, g: 1, b: 1, a: 1}
+    PressedColor: {r: 0.89705884, g: 0.89705884, b: 0.89705884, a: 1}
   menuItems: 0
   CurMenuItem: 0
   player: {fileID: 0}
