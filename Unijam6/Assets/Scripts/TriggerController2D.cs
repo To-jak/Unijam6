@@ -11,7 +11,6 @@ public class TriggerController2D : Controller2D {
 
     public void Start()
     {
-        base.Start();
         anim = GetComponent<Animator>();
     }
 

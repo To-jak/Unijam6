@@ -17,7 +17,7 @@ public class Controller2D : MonoBehaviour
     protected RaycastOrigins raycastOrigins;
     public CollisionInfo collisions;
 
-    protected void Start()
+    protected virtual void OnEnable()
     {
         boxCollider2D = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
@@ -25,19 +25,23 @@ public class Controller2D : MonoBehaviour
 
     public virtual void Move(Vector3 velocity)
     {
-        UpdateRaycastOrigins();
-        collisions.Reset();
-
-        if (velocity.x != 0)
+        if (boxCollider2D != null)
         {
-            HorizontalCollisions(ref velocity);
-        }
-        if (velocity.y != 0)
-        {
-            VerticalCollisions(ref velocity);
-        }
+            UpdateRaycastOrigins();
+            collisions.Reset();
 
-        transform.Translate(velocity);
+            if (velocity.x != 0)
+            {
+                HorizontalCollisions(ref velocity);
+            }
+            if (velocity.y != 0)
+            {
+                VerticalCollisions(ref velocity);
+            }
+
+            transform.Translate(velocity);
+        }
+            
     }
 
     protected void HorizontalCollisions(ref Vector3 velocity)
@@ -94,6 +98,7 @@ public class Controller2D : MonoBehaviour
 
     protected void UpdateRaycastOrigins()
     {
+
         Bounds bounds = boxCollider2D.bounds;
         bounds.Expand(skinWidth * -2);
 

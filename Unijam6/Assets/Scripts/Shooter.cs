@@ -20,7 +20,7 @@ public class Shooter : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        InvokeRepeating("Fire", 2.0f, frequency);
+        InvokeRepeating("Fire", 0.0f, frequency);
 
     }
 	

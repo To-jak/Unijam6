@@ -8,6 +8,15 @@ public class CircularMenuManager : MonoBehaviour {
     GameObject CircularMenu;
     public GameObject player;
 
+    private AudioSource source;
+    public AudioClip swapMenu;
+    private bool firsthit;
+
+    void Awake()
+    {
+        source = GetComponent<AudioSource>();
+    }
+
     // Use this for initialization
     void Start () {
 
@@ -21,12 +30,18 @@ public class CircularMenuManager : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.Tab))
         {
+            if (!firsthit)
+            {
+                source.PlayOneShot(swapMenu, 1F);
+                firsthit = true;
+            }
             Time.timeScale = 0;
             player.GetComponent<Player>().enabled = false;
             CircularMenu.SetActive(true);
         }
         else
         {
+            firsthit = false;
             Time.timeScale = 1;
             player.GetComponent<Player>().enabled = true;
             CircularMenu.SetActive(false);

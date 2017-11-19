@@ -35,6 +35,14 @@ public class Player : MonoBehaviour
     Animator anim;
     private bool lancer;
 
+    public AudioClip jumpBarre;
+    private AudioSource source;
+
+    void Awake()
+    {
+        source = GetComponent<AudioSource>();
+    }
+
     void Start()
     {
         controller = GetComponent<PlayerController2D>();
@@ -137,6 +145,7 @@ public class Player : MonoBehaviour
                 {
                     SetSaut();
                     velocity.y = jumpVelocity;
+                    source.PlayOneShot(jumpBarre, 1F);
                 }
                 else
                 {

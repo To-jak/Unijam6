@@ -36,20 +36,23 @@ public class Health : MonoBehaviour {
 
     public int TakeDamage(int damage)
     {
-        damage = damage - damage % healthPointsPerUnit;                 // on ne garde que la partie entière de damage au cas où, pour toujours avoir un nombre entier de coeurs
-
-        currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0, maxHealthPoints);
-
-        Debug.Log("Took " + damage + " damage");
-        Debug.Log("Current health " + currentHealthPoints);
-
-        UpdateHealthDisplay();
-
-        if (currentHealthPoints == 0)
+        if (currentHealthPoints > 0)
         {
-            source.PlayOneShot(mort, 1F);
-            Invoke("Die",1);
-            return 0;
+            damage = damage - damage % healthPointsPerUnit;                 // on ne garde que la partie entière de damage au cas où, pour toujours avoir un nombre entier de coeurs
+
+            currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0, maxHealthPoints);
+
+            Debug.Log("Took " + damage + " damage");
+            Debug.Log("Current health " + currentHealthPoints);
+
+            UpdateHealthDisplay();
+
+            if (currentHealthPoints == 0)
+            {
+                source.PlayOneShot(mort, 1F);
+                Invoke("Die", 1);
+                return 0;
+            }
         }
         return currentHealthPoints;
     }

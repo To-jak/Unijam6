@@ -24,9 +24,9 @@ public class GameManager : MonoBehaviour {
 
     void InitPlayer()
     {
-        player.transform.position = startPosition;
         player.GetComponent<Player>().Init();
         player.GetComponent<Health>().Init();
+        player.transform.position = startPosition;
     }
 
     public void PlayerDead()

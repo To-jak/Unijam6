@@ -8,7 +8,7 @@ public class TriggerObject : MonoBehaviour {
 
     protected bool triggered;
 
-	void Update () {
+	protected virtual void Update () {
         bool allTriggers = true;
         for (int i = 0; i < triggers.Length; i++)
         {
@@ -17,6 +17,7 @@ public class TriggerObject : MonoBehaviour {
 
         if (allTriggers && !triggered)
         {
+            Debug.Log("AAAAAAAAAAAAAAAAA");
             Trigger(true);
         }
         else if (triggered && !allTriggers)
