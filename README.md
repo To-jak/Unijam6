@@ -1,6 +1,6 @@
 # KORO
 
-Koro is a puzzle-platformer game where your health bar is part of the game! You can use your hearts to activate switches, your health bar as a platform or even as a shield!
+Koro is a puzzle-platformer game where your character's health is directly part of the game! You can use your hearts to activate switches, your health bar as a platform or even as a shield!
 
 Download and try out the game [HERE](https://kevcouscous.itch.io/koro-unijam2017).
 
