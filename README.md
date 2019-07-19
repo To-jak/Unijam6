@@ -5,7 +5,7 @@ Koro is a puzzle-platformer game where your health bar is part of the game! You 
 Download and try out the game [HERE](https://kevcouscous.itch.io/koro-unijam2017).
 
 ## Video Demonstration
-
+*Click on the image below to see a video demo of the game.*
 [![KORO video demonstration](https://img.youtube.com/vi/NSaW3fDBoQg/0.jpg)](https://www.youtube.com/watch?v=NSaW3fDBoQg)
 
 ## The team
